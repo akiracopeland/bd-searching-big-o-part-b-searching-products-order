@@ -23,9 +23,14 @@ public class AmazonOrderService {
      * @param asin - The ASIN being searched for.
      * @return the Amazon Package with the target ASIN
      */
-    public AmazonPackage findPackageLinear(String asin) {
+    public AmazonPackage findPackageLinear(String asin) throws PackageNotFoundException {
         // PARTICIPANTS - Implement a linear search for a package matching the requested ASIN
-        return packages.get(0);
+        for (AmazonPackage pkg : this.packages) {
+            if (pkg.getAsin().equals(asin)) {
+                return pkg;
+            }
+        }
+        throw new PackageNotFoundException("Package not found");
     }
 
     /**
@@ -34,8 +39,29 @@ public class AmazonOrderService {
      * @param asin - The ASIN being searched for.
      * @return the Amazon Package with the target ASIN
      */
-    public AmazonPackage findPackageBinary(String asin) {
+    public AmazonPackage findPackageBinary(String asin) throws PackageNotFoundException {
         // PARTICIPANTS - Implement a binary search for a package matching the requested ASIN
-        return packages.get(0);
+
+        AmazonPackage targetPackage;
+
+        int beginning = 0;
+        int end = packages.size() - 1;
+        int pointer;
+
+        while (beginning <= end) {
+            pointer = (beginning + end)/2;
+            int result = this.packages.get(pointer).getAsin().compareTo(asin);
+            if (result == 0) {
+                return this.packages.get(pointer);
+            } else if (result < 0) {
+                beginning = pointer + 1;
+            } else {
+                end = pointer -1;
+            }
+        }
+
+        throw new PackageNotFoundException("Package not found");
+
+
     }
 }
